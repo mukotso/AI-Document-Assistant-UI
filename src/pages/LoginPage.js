@@ -1,5 +1,5 @@
 import { Box, Button, Checkbox, CircularProgress, FormControlLabel, FormGroup, Stack, TextField, Typography, circularProgressClasses, colors } from "@mui/material";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { images } from "../assets";
 import { useNavigate } from "react-router-dom";
 import Animate from "../components/common/Animate";
@@ -13,48 +13,133 @@ const LoginPage = () => {
   const [loginProgress, setLoginProgress] = useState(0);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isRegistering, setIsRegistering] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [userStatus, setUserStatus] = useState("Active");
+  const [middleName, setMiddleName] = useState("");
+  const [isFormValid, setIsFormValid] = useState(false);
+  const [emailError, setEmailError] = useState("");
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  const [isLoading, setIsLoading] = useState(false); 
 
-  const onSignin = (e) => {
-    e.preventDefault();
-    setOnRequest(true);
-
-    const interval = setInterval(() => {
-      setLoginProgress(prev => prev + 100 / 40);
-    }, 50);
-
-    setTimeout(() => {
-      clearInterval(interval);
-    }, 2000);
-
-    setTimeout(() => {
-      setIsLoggedIn(true);
-    }, 2100);
-
-    setTimeout(() => {
-      navigate("/dashboard");
-    }, 3300);
+  const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
   };
 
-  const onRegister = (e) => {
+  useEffect(() => {
+    const validateForm = () => {
+      const isValidEmail = validateEmail(email);
+      setEmailError(isValidEmail ? "" : "Email format should be valid");
+      return email !== "" && firstName !== "" && lastName !== "" && password !== "" && isValidEmail;
+    };
+
+    setIsFormValid(validateForm());
+  }, [email, firstName, lastName, password]);
+
+  const handleEmailChange = (e) => {
+    const value = e.target.value;
+    setEmail(value);
+  };
+
+  const onSignin = async (e) => {
     e.preventDefault();
     setOnRequest(true);
+    // setIsLoading(true); 
 
     const interval = setInterval(() => {
       setLoginProgress(prev => prev + 100 / 40);
     }, 50);
 
-    setTimeout(() => {
-      clearInterval(interval);
-    }, 2000);
+    try {
+      const response = await fetch('http://localhost:4201/auth/loginKeycloak', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email: email, password }),
+      });
 
-    // Simulate registration process
-    setTimeout(() => {
-      setIsLoggedIn(false);
-      setIsRegistering(false);
+      const data = await response.json();
+
+      if (response.ok) {
+        localStorage.setItem('token', data.token);
+        setIsTransitioning(true);
+        
+     
+        setTimeout(() => {
+          setIsLoggedIn(true);
+          setIsLoading(false);
+          navigate("/dashboard");
+        }, 1000); 
+      } else {
+        toast.error(data.message || 'Login failed');
+        setIsLoading(false); 
+      }
+    } catch (error) {
+      toast.error('An error occurred');
+      setIsLoading(false); 
+    } finally {
+      clearInterval(interval);
       setOnRequest(false);
       setLoginProgress(0);
-      toast.success('Registration successful! Please log in.');
-    }, 2100);
+    }
+  };
+
+  const onRegister = async (e) => {
+    e.preventDefault();
+    setOnRequest(true);
+    setIsLoading(true); 
+
+    const interval = setInterval(() => {
+      setLoginProgress(prev => prev + 100 / 40);
+    }, 50);
+
+    const payload = {
+      users: [
+        {
+          email,
+          first_name: firstName,
+          last_name: lastName,
+          middle_name: middleName,
+          user_status: userStatus,
+          password,
+        },
+      ],
+    };
+
+    try {
+      const response = await fetch('http://localhost:4201/manage/users/register/client_admins', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        toast.success('Registration successful! Please log in.');
+        setIsRegistering(false);
+        setIsLoggedIn(false);
+        setOnRequest(false);
+        setIsLoading(false); 
+        setLoginProgress(0);
+      } else {
+        toast.error(data.message || 'Registration failed');
+        setIsLoading(false); 
+      }
+    } catch (error) {
+      toast.error('An error occurred');
+      setIsLoading(false); 
+    } finally {
+      clearInterval(interval);
+      setOnRequest(false);
+      setLoginProgress(0);
+    }
   };
 
   const toggleForm = () => {
@@ -83,14 +168,17 @@ const LoginPage = () => {
       {/* background box */}
 
       {/* Form container */}
-      <Box sx={{
-        position: "absolute",
-        left: 0,
-        height: "100%",
-        width: isLoggedIn ? "100%" : { xl: "30%", lg: "40%", md: "50%", xs: "100%" },
-        transition: "all 1s ease-in-out",
-        bgcolor: colors.common.white
-      }}>
+      <Box
+        sx={{
+          position: "absolute",
+          left: 0,
+          height: "100%",
+          width: isLoggedIn ? "100%" : { xl: "30%", lg: "40%", md: "50%", xs: "100%" },
+          transition: "all 1s ease-in-out",
+          bgcolor: colors.common.white,
+          // opacity: isTransitioning ? 0 : 1, 
+        }}
+      >
         <Box sx={{
           display: "flex",
           flexDirection: "column",
@@ -124,10 +212,10 @@ const LoginPage = () => {
               {!isRegistering ? (
                 <Box component="form" maxWidth={400} width="100%" onSubmit={onSignin}>
                   <Stack spacing={3}>
-                    <TextField label="username" fullWidth />
-                    <TextField label="password" type="password" fullWidth />
+                    <TextField label="Email" fullWidth value={email} onChange={(e) => setEmail(e.target.value)} />
+                    <TextField label="Password" type="password" fullWidth value={password} onChange={(e) => setPassword(e.target.value)} />
                     <Button type="submit" size="large" variant="contained" color="success">
-                      sign in
+                      Sign in
                     </Button>
                     <Stack direction="row" justifyContent="space-between" alignItems="center">
                       <FormGroup>
@@ -144,11 +232,20 @@ const LoginPage = () => {
               ) : (
                 <Box component="form" maxWidth={400} width="100%" onSubmit={onRegister}>
                   <Stack spacing={3}>
-                    <TextField label="username" fullWidth />
-                    <TextField label="email" type="email" fullWidth />
-                    <TextField label="password" type="password" fullWidth />
-                    <Button type="submit" size="large" variant="contained" color="success">
-                      register
+                    <TextField
+                      label="Email"
+                      fullWidth
+                      value={email}
+                      onChange={handleEmailChange}
+                      error={!!emailError}
+                      helperText={emailError}
+                    />
+                    <TextField label="First Name" fullWidth value={firstName} onChange={(e) => setFirstName(e.target.value)} />
+                    <TextField label="Last Name" fullWidth value={lastName} onChange={(e) => setLastName(e.target.value)} />
+                    <TextField label="Middle Name" fullWidth value={middleName} onChange={(e) => setMiddleName(e.target.value)} />
+                    <TextField label="Password" type="password" fullWidth value={password} onChange={(e) => setPassword(e.target.value)} />
+                    <Button type="submit" size="large" variant="contained" color="success" disabled={!isFormValid}>
+                      Register
                     </Button>
                   </Stack>
                 </Box>
@@ -224,6 +321,3 @@ const LoginPage = () => {
 };
 
 export default LoginPage;
-
-
-

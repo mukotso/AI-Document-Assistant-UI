@@ -40,10 +40,8 @@ const Sidebar = ({ sidebarWidth }) => {
   const { pathname } = location;
 
   const handleLogout = () => {
-    // Perform any necessary logout logic here, such as clearing tokens
-
-    // Redirect to home page
-    navigate('/');
+    localStorage.removeItem('token');
+    navigate('/', { replace: true });
   };
 
   const MenuItem = (props) => {
