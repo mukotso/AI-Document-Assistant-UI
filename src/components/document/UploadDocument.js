@@ -14,7 +14,7 @@ const UploadDocument = () => {
 
   const handleChangeStatus = ({ meta, file }, status) => {
     console.log(status, meta, file);
-    if (status === 'done') {
+    if (status === 'ok') {
       toast.success(`${meta.name} uploaded successfully!`);
     } else if (status === 'error') {
       toast.error(`${meta.name} upload failed.`);
@@ -28,7 +28,7 @@ const UploadDocument = () => {
           const formData = new FormData();
           formData.append('file', file.file);
 
-          const response = await fetch('http://localhost:3000/upload', {
+          const response = await fetch('http://localhost:4201/users/upload_file', {
             method: 'POST',
             body: formData,
           });
@@ -37,13 +37,28 @@ const UploadDocument = () => {
             throw new Error('Upload failed');
           }
 
-          return response.json();
+          const result = await response.json();
+
+          console.log("result-->", result)
+        
+          await fetch('http://localhost:4201/users/save_file_url', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              name: file.meta.name,
+              url: result.url,
+            }),
+          });
+
+          return result;
         })
       );
 
       const newDocuments = responses.map((res) => ({
         name: res.originalName, 
-        originalUrl: res.originalUrl,
+        originalUrl: res.url,
         improvedUrl: res.improvedUrl, 
       }));
 
