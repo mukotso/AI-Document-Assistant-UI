@@ -5,31 +5,36 @@ import 'react-dropzone-uploader/dist/styles.css';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import MPaper from '../common/MPaper';
-import { Box, Stack, Typography } from '@mui/material';
-import DocumentPreview from './DocumentPreview'; 
+import { Box, Stack, Typography, CircularProgress } from '@mui/material';
 
 const UploadDocument = () => {
   const [uploadedDocuments, setUploadedDocuments] = useState([]);
-  const navigate = useNavigate(); 
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleChangeStatus = ({ meta, file }, status) => {
-    console.log(status, meta, file);
-    if (status === 'ok') {
+    if (status === 'done') {
       toast.success(`${meta.name} uploaded successfully!`);
+      handleSubmit([file]);
     } else if (status === 'error') {
       toast.error(`${meta.name} upload failed.`);
     }
   };
 
-  const handleSubmit = async (files, allFiles) => {
+  const handleSubmit = async (files) => {
+    setIsLoading(true);
+    const token = localStorage.getItem('token');
     try {
       const responses = await Promise.all(
         files.map(async (file) => {
           const formData = new FormData();
-          formData.append('file', file.file);
+          formData.append('file', file);
 
-          const response = await fetch('http://localhost:4201/users/upload_file', {
+          const response = await fetch('http://localhost:8022/api/upload/', {
             method: 'POST',
+            headers: {
+              'Authorization': `Token ${token}`,
+            },
             body: formData,
           });
 
@@ -38,38 +43,20 @@ const UploadDocument = () => {
           }
 
           const result = await response.json();
+          console.log("result after upload----->", result);
+          setUploadedDocuments((prev) => [...prev, result]);
 
-          console.log("result-->", result)
-        
-          await fetch('http://localhost:4201/users/save_file_url', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              name: file.meta.name,
-              url: result.url,
-            }),
-          });
+  
+          navigate('/documents/uploads', { state: { document: result } });
 
           return result;
         })
       );
-
-      const newDocuments = responses.map((res) => ({
-        name: res.originalName, 
-        originalUrl: res.url,
-        improvedUrl: res.improvedUrl, 
-      }));
-
-      setUploadedDocuments(newDocuments);
-      navigate('/documents/uploads'); 
-
     } catch (error) {
       console.error('Upload failed:', error);
       toast.error('Upload failed. Please try again.');
     } finally {
-      allFiles.forEach((f) => f.remove());
+      setIsLoading(false);
     }
   };
 
@@ -82,20 +69,20 @@ const UploadDocument = () => {
           </Typography>
         </Stack>
         <Box>
-          <Dropzone
-            onChangeStatus={handleChangeStatus}
-            onSubmit={handleSubmit}
-            accept=".pdf,.docx"
-            inputContent="Drag & Drop your documents or Click to Browse"
-            styles={{
-              dropzone: { border: '2px dashed #4a90e2', borderRadius: '10px', padding: '20px' },
-              inputLabel: { color: '#4a90e2', fontWeight: 'bold' },
-            }}
-          />
+          {isLoading ? (
+            <CircularProgress />
+          ) : (
+            <Dropzone
+              onChangeStatus={handleChangeStatus}
+              accept=".pdf,.docx,.txt"
+              inputContent="Drag & Drop your documents or Click to Browse"
+              styles={{
+                dropzone: { border: '2px dashed #4a90e2', borderRadius: '10px', padding: '20px' },
+                inputLabel: { color: '#4a90e2', fontWeight: 'bold' },
+              }}
+            />
+          )}
         </Box>
-        {uploadedDocuments.length > 0 && (
-          <DocumentPreview documents={uploadedDocuments} />
-        )}
       </Stack>
       <ToastContainer />
     </MPaper>
@@ -103,3 +90,4 @@ const UploadDocument = () => {
 };
 
 export default UploadDocument;
+
