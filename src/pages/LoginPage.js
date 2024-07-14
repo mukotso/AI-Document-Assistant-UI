@@ -14,11 +14,10 @@ const LoginPage = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isRegistering, setIsRegistering] = useState(false);
   const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [userStatus, setUserStatus] = useState("Active");
-  const [middleName, setMiddleName] = useState("");
   const [isFormValid, setIsFormValid] = useState(false);
   const [emailError, setEmailError] = useState("");
   const [isTransitioning, setIsTransitioning] = useState(false);
@@ -54,21 +53,20 @@ const LoginPage = () => {
     }, 50);
 
     try {
-      const response = await fetch('http://localhost:4201/auth/loginKeycloak', {
+      const response = await fetch('http://localhost:8022/api/users/login/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email: email, password }),
+        body: JSON.stringify({ username: username, password }),
       });
 
       const data = await response.json();
-
       if (response.ok) {
         localStorage.setItem('token', data.token);
         setIsTransitioning(true);
         
-     
+
         setTimeout(() => {
           setIsLoggedIn(true);
           setIsLoading(false);
@@ -98,20 +96,15 @@ const LoginPage = () => {
     }, 50);
 
     const payload = {
-      users: [
-        {
           email,
+          username:username,
           first_name: firstName,
           last_name: lastName,
-          middle_name: middleName,
-          user_status: userStatus,
           password,
-        },
-      ],
     };
 
     try {
-      const response = await fetch('http://localhost:4201/manage/users/register/client_admins', {
+      const response = await fetch('http://localhost:8022/api/users/register/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -212,7 +205,7 @@ const LoginPage = () => {
               {!isRegistering ? (
                 <Box component="form" maxWidth={400} width="100%" onSubmit={onSignin}>
                   <Stack spacing={3}>
-                    <TextField label="Email" fullWidth value={email} onChange={(e) => setEmail(e.target.value)} />
+                    <TextField label="Username" fullWidth value={username} onChange={(e) => setUsername(e.target.value)} />
                     <TextField label="Password" type="password" fullWidth value={password} onChange={(e) => setPassword(e.target.value)} />
                     <Button type="submit" size="large" variant="contained" color="success">
                       Sign in
@@ -240,9 +233,9 @@ const LoginPage = () => {
                       error={!!emailError}
                       helperText={emailError}
                     />
+                     <TextField label="Username" fullWidth value={username} onChange={(e) => setUsername(e.target.value)} />
                     <TextField label="First Name" fullWidth value={firstName} onChange={(e) => setFirstName(e.target.value)} />
                     <TextField label="Last Name" fullWidth value={lastName} onChange={(e) => setLastName(e.target.value)} />
-                    <TextField label="Middle Name" fullWidth value={middleName} onChange={(e) => setMiddleName(e.target.value)} />
                     <TextField label="Password" type="password" fullWidth value={password} onChange={(e) => setPassword(e.target.value)} />
                     <Button type="submit" size="large" variant="contained" color="success" disabled={!isFormValid}>
                       Register
