@@ -39,12 +39,12 @@ const DocumentPreview = () => {
   };
 
   const handleApprove = () => {
-    // Handle approve logic here
+
     console.log('Document approved');
   };
 
   const handleReject = () => {
-    // Handle reject logic here
+   
     console.log('Document rejected');
   };
 

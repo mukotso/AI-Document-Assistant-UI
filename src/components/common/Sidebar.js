@@ -4,6 +4,7 @@ import DashboardCustomizeOutlinedIcon from '@mui/icons-material/DashboardCustomi
 import OtherHousesOutlinedIcon from '@mui/icons-material/OtherHousesOutlined';
 import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
 import LogoutIcon from '@mui/icons-material/Logout';
+import DocumentScannerIcon from '@mui/icons-material/DocumentScanner';
 import { Box, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Paper, Typography, colors } from '@mui/material';
 import { images } from '../../assets';
 import Animate from './Animate';
@@ -21,6 +22,11 @@ const serviceMenus = [
     title: 'Documents',
     icon: <OtherHousesOutlinedIcon />,
     state: 'documents',
+  },
+  {
+    title: 'My Docs',
+    icon: <DocumentScannerIcon />,
+    state: 'docs',
   },
   {
     title: 'Users',
