@@ -1,5 +1,5 @@
 export const images = {
-  loginBg: require("./images/bglogin.png"),
+  loginBg: require("./images/bglogin2.jpg"),
   summaryImages: {
     totalBook: require("./images/perspective_matte-385-128x128.png"),
     sold: require("./images/perspective_matte-67-128x128.png"),

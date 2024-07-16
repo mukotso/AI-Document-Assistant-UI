@@ -8,25 +8,24 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 
-const Users = () => {
+
+const MyDocument = () => {
   const [rows, setRows] = useState([]);
-  const token = localStorage.getItem('token');
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        const token = localStorage.getItem('token');
         const response = await fetch('http://localhost:8022/api/users/all/', {
           method: 'GET',
           headers: {
-            'Authorization': `Bearer ${token}`,
+            'Authorization': `Token ${token}`,
           },
         });
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
-
-        console.log('reposne---', response)
 
         const data = await response.json();
         setRows(data);
@@ -36,33 +35,33 @@ const Users = () => {
     };
 
     fetchData();
-  }, [token]);
+  }, []);
+
+
 
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
-        <TableHead>
-          <TableRow>
-            <TableCell>Dessert (100g serving)</TableCell>
-            <TableCell align="right">Calories</TableCell>
-            <TableCell align="right">Fat&nbsp;(g)</TableCell>
-            <TableCell align="right">Carbs&nbsp;(g)</TableCell>
-            <TableCell align="right">Protein&nbsp;(g)</TableCell>
+      <TableHead>
+          <TableRow sx={{ backgroundColor: 'green' }}>
+            <TableCell sx={{ color: 'white' }}>First Name</TableCell>
+            <TableCell align="left" sx={{ color: 'white' }}>Last Name</TableCell>
+            <TableCell align="left" sx={{ color: 'white' }}>Username</TableCell>
+            <TableCell align="left" sx={{ color: 'white' }}>Email Address</TableCell>
+            <TableCell align="left" sx={{ color: 'white' }}>Actions</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {rows.map((row) => (
             <TableRow
-              key={row.name}
+              key={row.id}
               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
             >
-              <TableCell component="th" scope="row">
-                {row.name}
-              </TableCell>
-              <TableCell align="right">{row.calories}</TableCell>
-              <TableCell align="right">{row.fat}</TableCell>
-              <TableCell align="right">{row.carbs}</TableCell>
-              <TableCell align="right">{row.protein}</TableCell>
+              <TableCell component="th" scope="row">{row.first_name}</TableCell>
+               <TableCell align="left">{row.last_name}</TableCell> 
+              <TableCell align="left">{row.username}</TableCell>
+              <TableCell align="left">{row.email}</TableCell>
+              <TableCell align="left">Actions</TableCell>
             </TableRow>
           ))}
         </TableBody>
@@ -71,4 +70,4 @@ const Users = () => {
   );
 }
 
-export default Users;
+export default MyDocument;
