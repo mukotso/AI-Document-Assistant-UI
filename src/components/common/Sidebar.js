@@ -105,10 +105,15 @@ const Sidebar = ({ sidebarWidth }) => {
     >
       {/* logo */}
       <Box sx={{ textAlign: 'center', mb: 2 }}>
-        <Animate type='fade' delay={1}>
-          <img src={images.logo} alt='logo' height={60} />
-        </Animate>
-      </Box>
+  <Animate type='fade' delay={1}>
+    <img 
+      src={images.logo} 
+      alt='logo' 
+      height={90} 
+      style={{ borderRadius: '15%' }} 
+    />
+  </Animate>
+</Box>
       {/* logo */}
 
       <Animate sx={{ flexGrow: 1 }}>

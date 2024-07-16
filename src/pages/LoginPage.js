@@ -152,7 +152,7 @@ const LoginPage = () => {
         position: "absolute",
         right: 0,
         height: "100%",
-        width: "70%",
+        width: "55%",
         backgroundPosition: "center",
         backgroundSize: "cover",
         backgroundRepeat: "no-repeat",
@@ -166,7 +166,7 @@ const LoginPage = () => {
           position: "absolute",
           left: 0,
           height: "100%",
-          width: isLoggedIn ? "100%" : { xl: "30%", lg: "40%", md: "50%", xs: "100%" },
+          width: isLoggedIn ? "100%" : { xl: "45%", lg: "40%", md: "50%", xs: "100%" },
           transition: "all 1s ease-in-out",
           bgcolor: colors.common.white,
           // opacity: isTransitioning ? 0 : 1, 
@@ -181,13 +181,18 @@ const LoginPage = () => {
           height: "100%",
           "::-webkit-scrollbar": { display: "none" }
         }}>
-          {/* logo */}
-          <Box sx={{ textAlign: "center", p: 5 }}>
-            <Animate type="fade" delay={0.5}>
-              <img src={images.logo} alt="logo" height={60}></img>
-            </Animate>
-          </Box>
-          {/* logo */}
+          
+
+          <Box sx={{ textAlign: 'center', p: 5 }}>
+  <Animate type='fade' delay={1}>
+    <img 
+      src={images.logo} 
+      alt='logo' 
+      height={90} 
+      style={{ borderRadius: '15%' }} 
+    />
+  </Animate>
+</Box>
 
           {/* form */}
           <Box sx={{
