@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Grid, Box } from '@mui/material';
 import Animate from '../components/common/Animate';
 import UploadDocument from '../components/document/UploadDocument';
-import DocumentStats from '../components/document/DocumentStatsSummary';
+
 
 const DocumentsPage = () => {
   const [documentStats, setDocumentStats] = useState({ total: 0, approved: 0, rejected: 0 });
@@ -38,19 +38,13 @@ const DocumentsPage = () => {
         <Grid container spacing={3}>
           <Grid item xs={12}>
             <Box sx={{ marginTop: 18 }}> 
-              <Animate type="fade" delay={0.7} sx={{ height: '100%' }}>
+              <Animate type="fade" delay={1} sx={{ height: "100%" }}>
                 <UploadDocument />
               </Animate>
             </Box>
           </Grid>
 
-          <Grid item xs={12} container justifyContent="center">
-            <Animate delay={2.5}>
-              <Grid item xs={12}>
-                <DocumentStats data={documentStats} />
-              </Grid>
-            </Animate>
-          </Grid>
+        
         </Grid>
       </Grid>
     </Grid>

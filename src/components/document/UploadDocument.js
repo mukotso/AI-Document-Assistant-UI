@@ -5,7 +5,7 @@ import 'react-dropzone-uploader/dist/styles.css';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import MPaper from '../common/MPaper';
-import { Box, Stack, Typography, CircularProgress } from '@mui/material';
+import { Box, Stack, Typography, CircularProgress, colors } from '@mui/material';
 
 const UploadDocument = () => {
   const [uploadedDocuments, setUploadedDocuments] = useState([]);
@@ -46,7 +46,6 @@ const UploadDocument = () => {
           console.log("result after upload----->", result);
           setUploadedDocuments((prev) => [...prev, result]);
 
-  
           navigate('/documents/uploads', { state: { document: result } });
 
           return result;
@@ -61,13 +60,26 @@ const UploadDocument = () => {
   };
 
   return (
-    <MPaper title="Upload Document">
+    <MPaper>
       <Stack spacing={4}>
-        <Stack direction="row" justifyContent="center" alignItems="center">
-          <Typography variant="body2">
-            Drag & Drop your documents or Click to Browse
-          </Typography>
-        </Stack>
+        <Typography variant="h3" fontWeight="bold"  gutterBottom sx={{ color: 'green' }}>
+          Upload Your Document
+        </Typography>
+        <Typography variant="body1" color={colors.grey[600]} paragraph>
+          Easily upload your documents for review and improvement by our AI system. Follow the instructions below to ensure a smooth upload process.
+        </Typography>
+        <Typography variant="body2" color={colors.grey[800]} paragraph>
+          Accepted file types:
+          <ul>
+            <li><b>PDF</b></li>
+            <li> <b>DOCX</b></li>
+            <li> <b>TXT</b></li>
+          </ul>
+          Please make sure your files do not exceed <b>10MB</b> in size. 
+          Our AI will analyze the content and provide suggestions for improvement.
+        </Typography>
+
+        
         <Box>
           {isLoading ? (
             <CircularProgress />
@@ -90,4 +102,3 @@ const UploadDocument = () => {
 };
 
 export default UploadDocument;
-

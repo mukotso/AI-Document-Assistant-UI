@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import DashboardCustomizeOutlinedIcon from '@mui/icons-material/DashboardCustomizeOutlined';
-import OtherHousesOutlinedIcon from '@mui/icons-material/OtherHousesOutlined';
+import AddCircleOutlineOutlined from '@mui/icons-material/AddCircleOutlineOutlined';
 import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
 import LogoutIcon from '@mui/icons-material/Logout';
 import DocumentScannerIcon from '@mui/icons-material/DocumentScanner';
@@ -19,8 +19,8 @@ const menus = [
 
 const serviceMenus = [
   {
-    title: 'Documents',
-    icon: <OtherHousesOutlinedIcon />,
+    title: 'New Document',
+    icon: <AddCircleOutlineOutlined />,
     state: 'documents',
   },
   {
