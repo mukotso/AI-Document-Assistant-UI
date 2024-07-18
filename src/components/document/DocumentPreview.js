@@ -114,20 +114,7 @@ const DocumentPreview = () => {
         <Grid item xs={12} sm={6}>
           <MPaper title="Original Document">
             <Stack spacing={3}>
-              <Stack direction="row" alignItems="center" spacing={5} sx={{ color: 'textSecondary' }}>
-                <Stack direction="row" spacing={1} alignItems="center">
-                  <AspectRatioIcon fontSize="small" />
-                  <Typography variant="body2" fontWeight={600}>
-                    Aspect ratio
-                  </Typography>
-                </Stack>
-                <Stack direction="row" spacing={1} alignItems="center">
-                  <AccessTimeIcon fontSize="small" />
-                  <Typography variant="body2" fontWeight={600}>
-                    Time
-                  </Typography>
-                </Stack>
-              </Stack>
+              
               <Box>
                 {document.content}
               </Box>
@@ -139,18 +126,7 @@ const DocumentPreview = () => {
           <MPaper title="Improved Document">
             <Stack spacing={3}>
               <Stack direction="row" alignItems="center" spacing={5} sx={{ color: 'textSecondary' }}>
-                <Stack direction="row" spacing={1} alignItems="center">
-                  <AspectRatioIcon fontSize="small" />
-                  <Typography variant="body2" fontWeight={600}>
-                    Aspect ratio
-                  </Typography>
-                </Stack>
-                <Stack direction="row" spacing={1} alignItems="center">
-                  <AccessTimeIcon fontSize="small" />
-                  <Typography variant="body2" fontWeight={600}>
-                    Time
-                  </Typography>
-                </Stack>
+              
 
                 {isImproved && (
                   <Box>
